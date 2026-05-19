@@ -1,0 +1,31 @@
+---
+- name: Validar Conexion a VMware ESXi 8
+  hosts: esxi-01.pclinux.com
+  gather_facts: false
+  vars:
+    # Fuerza al Entorno de Ejecución a usar el intérprete de Python base
+    ansible_python_interpreter: /usr/bin/python3
+  tasks:
+    - name: Inyectar pyvmomi dentro del contenedor
+      ansible.builtin.pip:
+        name: pyvmomi
+        state: present
+        executable: /usr/bin/pip3
+      delegate_to: localhost
+
+    - name: Consultar API de VMware
+      community.vmware.vmware_host_facts:
+        hostname: "{{ ansible_host }}"
+        username: "{{ lookup('ansible.builtin.env', 'VMWARE_USER') }}"
+        password: "{{ lookup('ansible.builtin.env', 'VMWARE_PASSWORD') }}"
+        validate_certs: false
+      delegate_to: localhost
+      register: host_facts
+
+    - name: ¡LOGRADO!
+      ansible.builtin.debug:
+        msg: 
+          - "¡CONEXIÓN EXITOSA CON PCLINUX PERÚ!"
+          - "Distribucion: {{ host_facts.ansible_facts.ansible_distribution }}"
+          - "Version: {{ host_facts.ansible_facts.ansible_distribution_version }}"
+          - "Plataforma: {{ host_facts.ansible_facts.ansible_product_name }}"
