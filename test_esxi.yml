@@ -1,6 +1,6 @@
 ---
 - name: Validar Conexion a VMware ESXi 8
-  hosts: esxi-01.pclinux.com
+  hosts: ESXi02-TSC.transfar.com
   gather_facts: false
   vars:
     # Fuerza al Entorno de Ejecución a usar el intérprete de Python base
